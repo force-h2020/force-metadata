@@ -12,6 +12,25 @@ We will in particular consider:
 - Migration of SimPhoNy ontology (currently in a YAML custom format)
 - Extensions for those concepts OWL does not allow to express.
 
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in
+RFC 2119. [1]
+
+Changelog
+---------
+
+- Initial release
+
+Terminology
+-----------
+
+The following terms are used in the remainder of this document and are prescriptive:
+
+    - ``(non-qualified) CUBA key``: a fully capitalized, underscored name used as a moniker to refer to a class
+      or data type in our data model (e.g. COMPUTATIONAL_MODEL).
+    - ``qualified CUBA key``: a CUBA key prefixed with the ``CUBA.`` string (e.g. CUBA.COMPUTATIONAL_MODEL)
+
 Protege
 -------
 
@@ -38,47 +57,74 @@ Specifications
 Fundation
 '''''''''
 
-The Ontology MUST define the following.
+The ontology is based on the following IRI namespace:
 
-Datatypes:
+``http://purl.org/force-h2020/ontologies/v1/base#``
 
-- CUBAKey (parent of xsd:string)
+The customary prefix is ``force:`` and will be used for the rest of this document, where needed.
 
-Annotation properties:
+The Ontology MUST define the following Datatypes:
 
-- cubaKey (range: CUBAKey)
-- default (range: any)
+- ``CUBAKey``: defines a non-qualified CUBA Key. with the following format CUBA.
+- ``doubleArray``: an array, matrix, or n-dimensional array of ``xsd:double`` values. 
+    Its lexical representation is in python "list of lists" notation. For n-dimensional
+    arrays, the assumed order is python/C-like (row-wise)
+- ``intArray``: as above, but values are ``xsd:integer``.
+- ``shapeArray``: as above, but values are represented as a list of ``xsd:integer`` or the literal value ``None``
+   to indicate shape dimensions that are open ended. For example, a 3D geometry is indicated as ``[3, None]`` or ``[None, 3]``
+   depending on the chosen convention for the orientation of the information. 
+- ``stringArray``: as above, but values ``are xsd:string``.
 
-Adding a new datatype
-'''''''''''''''''''''
+The following annotation properties MUST also be defined:
 
-- A new datatype MUST be a child (direct or indirect) of the appropriate type (e.g. ``Mass`` must be derived from ``xsd:float``).
-- the datatype name MUST be CapitalisedCamelCase. (e.g. ``ZetaPotential``)
-- the datatype SHOULD have an annotation ``cubaKey`` whose value is the name of the datatyp, fully capitalized (e.g. ``ZETA_POTENTIAL``).
-  If not present, it is assumed to be automatically created from the dataype name with an appropriate algorithm.
+- ``cubaKey (range: CUBAKey)``: used to annotate the CUBA key of a given class.
+- ``default (range: any)``: used to define a default value for a given relationship if not specified. 
+   This addresses a shortcoming of OWL not being able to express this concept.
+- ``shape (range: shapeArray)``: describes the shape of the array.
+
+Adding a new CUDS Item
+''''''''''''''''''''''
+
+- A new class MUST be created with the following requirements:
+    - MUST be a child (direct or indirect) of ``CUDSItem``
+    - the class name MUST be CapitalisedCamelCase. (e.g. ``PressureGradient``)
+    - the class SHOULD have an annotation ``cubaKey`` whose value is the name of the class, fully capitalized (e.g. ``PRESSURE_GRADIENT``).
+      If not present, the associated value will be automatically devised from the class name with an appropriate conversion algorithm.
+- An Object Property MUST be defined with the following requirements:
+    - the name equal to the class name, in lowercase camelcase (e.g. ``pressureGradient``)
+    - Range set to the new class.
+
+Adding a new CUBA datatype 
+''''''''''''''''''''''''''
+
 - a Datatype Property MUST be defined with the following requirements:
-  - the name equal to the datatype name, in lowercase camelcase (e.g. ``zetaPotential``)
-  - Range set to the datatype.
+    - the datatype property name MUST be lowercaseCamelCase. (e.g. ``zetaPotential``)
+    - the datatype property SHOULD have an annotation ``cubaKey`` whose value is the name of the datatype, fully capitalized (e.g. ``ZETA_POTENTIAL``).
+      If not present, it is assumed to be automatically created from the dataype property name with an appropriate algorithm.
+    - Range set to the appropriate ontology datatype (e.g ``xsd:double`` for a CUBA datatype that is a double in nature).
+- If range is an array (``intArray``, ``stringArray``, ``doubleArray``) the annotation ``shape`` MUST be present, indicating the expected 
+  shape of the datatype. 
 
+Adding CUBA properties to a class
+'''''''''''''''''''''''''''''''''
 
-Adding a new class
-''''''''''''''''''
+To add a datatype property to a class:
 
-- A new class MUST be a child (direct or indirect) of ``CUDSItem``.
-- the class name MUST be CapitalisedCamelCase. (e.g. ``PressureGradient``)
-- the class SHOULD have an annotation ``cubaKey`` whose value is the name of the class, fully capitalized (e.g. ``PRESSURE_GRADIENT``).
-  If not present, it is assumed to be automatically created from the class name with an appropriate algorithm.
-- an Object Property MUST be defined with the following requirements:
-  - the name equal to the class name, in lowercase camelcase (e.g. ``pressureGradient``)
-  - Range set to the new class.
+- An appropriate restriction on the class MUST be added.
+  Example: to express that ``NoseHoover (class)`` class has property ``couplingTime (data property)``, the following restriction MUST be added::
+        
+         couplingTime exactly 1 xsd:double
 
-Adding properties to a class
-''''''''''''''''''''''''''''
+  the restriction type MUST match the range of the datatype property.
 
-To add a property to a class:
+- An annotation ``default`` MAY be present, indicating the appropriate default value. 
+  The default MUST have the appropriate type and shape for its destination.
 
-- For a class to have a property, an appropriate restriction on the class MUST be added. 
-- If the property is a data property, an annotation ``default`` MAY be present, indicating the appropriate
-  default value. The default MUST have the appropriate type for its destination.
+To add a object property to a class:
+
+- An appropriate restriction on the class MUST be added:
+  Example: to express that 
+
 - If the property is an object property, an annotation ``default`` MAY be present, indicating the class
   of the default value. The default MUST have the appropriate type for its destination.
+
