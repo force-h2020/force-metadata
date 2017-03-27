@@ -57,9 +57,9 @@ Specifications
 Fundation
 '''''''''
 
-The ontology is based on the following IRI namespace:
+The ontology is based on the following IRI namespace::
 
-``http://purl.org/force-h2020/ontologies/force/v1#``
+    http://purl.org/force-h2020/ontologies/force/v1#
 
 The customary prefix is ``force:`` and will be used for the rest of this document, where needed.
 
@@ -70,12 +70,12 @@ The Ontology MUST define the following Datatypes:
     Its lexical representation is in python "list of lists" notation. For n-dimensional
     arrays, the assumed order is python/C-like (row-wise)
 - ``intArray``: as above, but values are ``xsd:integer``.
+- ``stringArray``: as above, but values are ``xsd:string``.
 - ``shapeArray``: as above, but values are represented as a list of ``xsd:integer`` or the literal value ``None``
    to indicate shape dimensions that are open ended. For example, a 3D geometry is indicated as ``[3, None]`` or ``[None, 3]``
    depending on the chosen convention for the orientation of the information. 
-- ``stringArray``: as above, but values ``are xsd:string``.
 
-The following annotation properties MUST also be defined:
+The following **annotation** properties MUST also be defined:
 
 - ``cubaKey (range: CUBAKey)``: used to annotate the CUBA key of a given class.
 - ``default (range: any)``: used to define a default value for a given relationship if not specified. 
@@ -85,26 +85,29 @@ The following annotation properties MUST also be defined:
 Adding a new CUDS Item
 ''''''''''''''''''''''
 
-- A new class MUST be created with the following requirements:
+1. A new class MUST be created with the following requirements:
     - MUST be a child (direct or indirect) of ``CUDSItem``
     - the class name MUST be CapitalisedCamelCase. (e.g. ``PressureGradient``)
     - the class MAY have an annotation ``cubaKey`` whose value is the name of the class, fully capitalized (e.g. ``PRESSURE_GRADIENT``).
       If not present, the associated value will be automatically devised from the class name with an appropriate conversion algorithm.
-- An Object Property MUST be defined with the following requirements:
+2. An Object Property MUST be defined with the following requirements:
     - the name equal to the class name, in lowercase camelcase (e.g. ``pressureGradient``)
     - MUST be declared Functional.
 
 Adding a new CUBA datatype 
 ''''''''''''''''''''''''''
 
-- a Datatype Property MUST be defined with the following requirements:
+1. a Datatype Property MUST be defined with the following requirements:
     - the datatype property name MUST be lowercaseCamelCase. (e.g. ``zetaPotential``)
     - the datatype property MAY have an annotation ``cubaKey`` whose value is the name of the datatype, fully capitalized (e.g. ``ZETA_POTENTIAL``).
       If not present, it is assumed to be automatically created from the dataype property name with an appropriate algorithm.
     - Range set to the appropriate ontology datatype (e.g ``xsd:double`` for a CUBA datatype that is a double in nature).
     - MUST be declared Functional.
-- If range is an array (``intArray``, ``stringArray``, ``doubleArray``) the annotation ``shape`` MUST be present, indicating the expected 
-  shape of the datatype. 
+    - If a property is a ``xsd:string`` or ``stringArray``, restriction on the length MUST be specified as (for a max length of 200) 
+      ``xsd:string[maxLength "200"^^xsd:positiveInteger]`` in the range->datarange expression dialog. 
+      (NOTE: due to a bug in Protege, the ``^^xsd:positiveInteger`` is mandatory and important.
+2. If range is an array (``intArray``, ``stringArray``, ``doubleArray``) the annotation ``shape`` MUST be present, indicating the expected 
+   shape of the datatype. 
 
 Adding CUBA properties to a class
 '''''''''''''''''''''''''''''''''
@@ -121,7 +124,7 @@ To add a datatype property to a class:
 - An annotation ``default`` MAY be present on the restriction, indicating the appropriate default value. 
   The default MUST have the appropriate type and shape for its destination.
 
-To add a object property to a class:
+To add an object property to a class:
 
 - An appropriate restriction on the class MUST be added::
     
@@ -160,7 +163,16 @@ be unordered. Normally, a list of entities contains semantic information about t
 
    - define an objectProperty with a pluralized name of the contained objects (e.g. ``materials``)
    - define on the hosting class the restriction ``materials exactly 1 (Materials or rdf:nil)``
-
    - a ``default`` annotation MAY be specified on the ``materials`` restriction. If specified it MUST contain python parseable code that perform the 
      initialization of a list of classes as from the ontology.
 
+
+References
+----------
+
+RDF validation is still a draft stage at W3C
+
+- https://www.w3.org/2012/12/rdf-val/SOTA
+
+We opted for OWL due to the presence of Protege as a graphical tool. Ad hoc solutions have been
+devised for those constructs that are not expressible in OWL (e.g. defaults)
