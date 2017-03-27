@@ -81,6 +81,7 @@ The following **annotation** properties MUST also be defined:
 - ``default (range: any)``: used to define a default value for a given relationship if not specified. 
    This addresses a shortcoming of OWL not being able to express this concept.
 - ``shape (range: shapeArray)``: describes the shape of the array.
+- ``unit (range: xsd:string)``: describes the physical units of the content.
 
 Adding a new CUDS Item
 ''''''''''''''''''''''
@@ -106,6 +107,10 @@ Adding a new CUBA datatype
     - If a property is a ``xsd:string`` or ``stringArray``, restriction on the length MUST be specified as (for a max length of 200) 
       ``xsd:string[maxLength "200"^^xsd:positiveInteger]`` in the range->datarange expression dialog. 
       (NOTE: due to a bug in Protege, the ``^^xsd:positiveInteger`` is mandatory and important.
+    - a ``unit`` MUST be present, indicating the unit of the data in a conventional and standardized way. The specification of the unit representation
+      is beyond the objective of this document.
+    - a ``rdfs:comment`` SHOULD be present, indicating the meaning of the data type.
+    
 2. If range is an array (``intArray``, ``stringArray``, ``doubleArray``) the annotation ``shape`` MUST be present, indicating the expected 
    shape of the datatype. 
 
