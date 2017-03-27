@@ -154,15 +154,13 @@ be unordered. Normally, a list of entities contains semantic information about t
    - define on the ``Materials`` class the restrictions::
 
        rdf:first exactly 1 Material
-       rdf:rest exactly 1 Materials
+       rdf:rest exactly 1 (Materials or rdf:nil)
 
      Note that the ``rdf:first`` refers to the singular class, while ``rdf:rest`` refers to the plural (list) class.
 
    - define an objectProperty with a pluralized name of the contained objects (e.g. ``materials``)
-   - define on the hosting class the restriction ``materials exactly 1 Materials``
+   - define on the hosting class the restriction ``materials exactly 1 (Materials or rdf:nil)``
 
    - a ``default`` annotation MAY be specified on the ``materials`` restriction. If specified it MUST contain python parseable code that perform the 
      initialization of a list of classes as from the ontology.
-
-
 
