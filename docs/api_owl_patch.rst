@@ -13,26 +13,40 @@ Creation of new datatype
 
 You can define a new datatype as follows::
 
-    class MyDataType(force_owl.Datatype):
-        parent="xsd:integer"
+    from force import DataType
 
-if parent is not specified, the datatype will be parentless in the OWL hierarchy
+    class MyDataType(DataType):
+        type=int
+
+supported types:
+
+- ``str``
+- ``int``
+- ``float``
+- ``array(int)``
+- ``array(float)``
+- ``array(str)``
+
+A shape can also be specified for arrays as ``array(int, [3, None])``, where
+``None`` is intended as no limit. By default, ``array(int)`` is equivalent to 
+``array(int, [None])`` (an unlimited, one-dimensional array)
 
 Creation of new class
 '''''''''''''''''''''
 
 To define a new class, you have to specify the following::
+    
+    from force import Class, Property
 
-    class MyClass(force_owl.Class):
+    class MyClass(Class):
         parent="ParentClass",
-        properties=[
+        properties={
             Property(MyDataType, default=1)
-            Property("MyOtherClass")
-            ]
-        )
+            Property(MyOtherClass)
+        }
 
 The following applies apply:
 
 - ``parent`` MUST be present, and refer to a class or class name.
-- ``Property`` can refer to a previously declared class/datatype, or to an existing class/datatype (by string).
+- ``properties`` must be a set of Property objects.
 
