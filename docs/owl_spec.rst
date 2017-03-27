@@ -67,19 +67,19 @@ The Ontology MUST define the following Datatypes:
 
 - ``CUBAKey``: defines a non-qualified CUBA Key. with the following format CUBA.
 - ``doubleArray``: an array, matrix, or n-dimensional array of ``xsd:double`` values. 
-    Its lexical representation is in python "list of lists" notation. For n-dimensional
-    arrays, the assumed order is python/C-like (row-wise)
+  Its lexical representation is in python "list of lists" notation. For n-dimensional
+  arrays, the assumed order is python/C-like (row-wise)
 - ``intArray``: as above, but values are ``xsd:integer``.
 - ``stringArray``: as above, but values are ``xsd:string``.
 - ``shapeArray``: as above, but values are represented as a list of ``xsd:integer`` or the literal value ``None``
-   to indicate shape dimensions that are open ended. For example, a 3D geometry is indicated as ``[3, None]`` or ``[None, 3]``
-   depending on the chosen convention for the orientation of the information. 
+  to indicate shape dimensions that are open ended. For example, a 3D geometry is indicated as ``[3, None]`` or ``[None, 3]``
+  depending on the chosen convention for the orientation of the information. 
 
 The following **annotation** properties MUST also be defined:
 
 - ``cubaKey (range: CUBAKey)``: used to annotate the CUBA key of a given class.
 - ``default (range: any)``: used to define a default value for a given relationship if not specified. 
-   This addresses a shortcoming of OWL not being able to express this concept.
+  This addresses a shortcoming of OWL not being able to express this concept.
 - ``shape (range: shapeArray)``: describes the shape of the array.
 - ``unit (range: xsd:string)``: describes the physical units of the content.
 
